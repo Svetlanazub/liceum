@@ -58,7 +58,7 @@ public class StudentDaoImpl implements StudentDao {
             "SELECT* FROM teachers JOIN students_teachers ON teachers.id = teacher_id WHERE student_id = ?";
 
     @Override
-    public void save(Student student) {
+    public Student save(Student student) {
         Map<String, Object> params = getParams(student);
         int studentId = 0;
         try {
@@ -67,16 +67,17 @@ public class StudentDaoImpl implements StudentDao {
             e.getMessage();
         }
         student.setId(studentId);
-
+        return student;
     }
 
     @Override
-    public void update(Student student) {
+    public Student update(Student student) {
         if (student.getId() != 0) {
             Map<String, Object> params = getParams(student);
             params.put("id", student.getId());
             namedParameterJdbcTemplate.update(UPDATE_STUDENT, params);
         }
+        return student;
     }
 
     @Override
@@ -118,11 +119,11 @@ public class StudentDaoImpl implements StudentDao {
     @Override
     public List<Teacher> findAllTeachersForTheStudent(int student_id) {
         List<Teacher> teachers = new ArrayList<>();
-            try {
-                teachers =  jdbcTemplate.query(READ_TEACHERS_BY_STUDENT_ID, new BeanPropertyRowMapper<>(Teacher.class), student_id);
-            } catch (DataAccessException e) {
-                e.getMessage();
-            }
+        try {
+            teachers = jdbcTemplate.query(READ_TEACHERS_BY_STUDENT_ID, new BeanPropertyRowMapper<>(Teacher.class), student_id);
+        } catch (DataAccessException e) {
+            e.getMessage();
+        }
         return teachers;
     }
 
@@ -157,6 +158,20 @@ public class StudentDaoImpl implements StudentDao {
             return Optional.empty();
         }
         return Optional.of(student);
+    }
+
+    @Override
+    public List<Student> getStudentsByPage(int pageid, int total) {
+        String sql = "Select * from public.students limit" + (pageid - 1) + "," + total;
+        List<Student> studentList = new ArrayList<>();
+        try {
+
+            studentList = jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(Student.class));
+
+        } catch (DataAccessException e) {
+            e.getMessage();
+        }
+        return studentList;
     }
 
     private static Map<String, Object> getParams(Student student) {

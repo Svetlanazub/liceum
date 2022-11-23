@@ -56,7 +56,7 @@ public class TeacherDaoImpl implements TeacherDao {
     private static final String READ_STUDENTS_BY_TEACHER_ID =
             "SELECT* FROM students JOIN students_teachers ON students.id = student_id WHERE teacher_id = ?";
     @Override
-    public void save(Teacher teacher) {
+    public Teacher save(Teacher teacher) {
         Map<String, Object> params = getParams(teacher);
         int teacherId = 0;
         try {
@@ -65,15 +65,17 @@ public class TeacherDaoImpl implements TeacherDao {
             e.getMessage();
         }
         teacher.setId(teacherId);
+        return teacher;
     }
 
     @Override
-    public void update(Teacher teacher) {
+    public Teacher update(Teacher teacher) {
         if (teacher.getId() != 0) {
             Map<String, Object> params = getParams(teacher);
             params.put("id", teacher.getId());
             namedParameterJdbcTemplate.update(UPDATE_TEACHER, params);
         }
+        return teacher;
     }
 
     @Override
@@ -153,6 +155,21 @@ public class TeacherDaoImpl implements TeacherDao {
             e.getMessage();
         }
     }
+
+    @Override
+    public List<Teacher> getTeachersByPage(int pageId, int total) {
+        String sql = "Select * from public.teachers limit" + (pageId - 1) + "," + total;
+        List<Teacher> teacherList = new ArrayList<>();
+        try {
+
+            teacherList = jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(Teacher.class));
+
+        } catch (DataAccessException e) {
+            e.getMessage();
+        }
+        return teacherList;
+    }
+
     private static Map<String, Object> getParams(Teacher teacher) {
         Map<String, Object> params = new HashMap<>();
         params.put("name", teacher.getName());

@@ -10,9 +10,9 @@ import java.util.Optional;
  * @author Svetlana_Zubkova
  */
 public interface TeacherDao {
-    void save(Teacher teacher);
+    Teacher save(Teacher teacher);
 
-    void update(Teacher teacher);
+    Teacher update(Teacher teacher);
 
     void delete(int id);
 
@@ -25,4 +25,5 @@ public interface TeacherDao {
     void addStudentToTeacher(int studentId, int teacherId);
 
     void deleteStudentFromTeacher(int studentId, int teacherId);
+    List<Teacher>getTeachersByPage(int pageId,int total);
 }

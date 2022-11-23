@@ -13,6 +13,7 @@ import org.springframework.transaction.annotation.EnableTransactionManagement;
  */
     @Configuration
     @EnableTransactionManagement
+    @Profile("Test")
     public class DataBaseConfig {
         /**
          * Creates dataSource h2 database

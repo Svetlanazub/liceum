@@ -7,6 +7,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
+import org.springframework.test.context.ActiveProfiles;
 
 import javax.sql.DataSource;
 
@@ -14,6 +15,7 @@ import javax.sql.DataSource;
  * @author Svetlana_Zubkova
  */
 @ComponentScan("pl.zubkova.webuniversity")
+@ActiveProfiles({"Test"})
 @Configuration
 public class ApplicationConfig {
 
