@@ -2,6 +2,7 @@ package pl.zubkova.webuniversity.service.impl;
 
 import org.springframework.stereotype.Service;
 import pl.zubkova.webuniversity.dao.TeacherDao;
+import pl.zubkova.webuniversity.dto.SortingDto;
 import pl.zubkova.webuniversity.entity.Student;
 import pl.zubkova.webuniversity.entity.Teacher;
 import pl.zubkova.webuniversity.service.TeacherService;
@@ -64,7 +65,7 @@ public class TeacherServiceImpl implements TeacherService {
     }
 
     @Override
-    public List<Teacher> getTeachersByPage(int pageId, int total) {
-        return teacherDao.getTeachersByPage(pageId, total);
+    public List<Teacher> getSortedTeachersByPage(int pageID, int pageSize, SortingDto sortingDto) {
+        return teacherDao.getSortedTeachersByPage(pageID, pageSize, sortingDto);
     }
 }

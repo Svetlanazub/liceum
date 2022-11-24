@@ -10,6 +10,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 import pl.zubkova.webuniversity.dao.TeacherDao;
+import pl.zubkova.webuniversity.dto.SortingDto;
 import pl.zubkova.webuniversity.entity.Student;
 import pl.zubkova.webuniversity.entity.Teacher;
 
@@ -46,7 +47,7 @@ public class TeacherDaoImpl implements TeacherDao {
     private static final String UPDATE_TEACHER = "UPDATE public.teachers SET name = :name, surname = :surname, age = :age, " +
             "email = :email, subject = :subject WHERE id = :id";
 
-    private static final String DELETE_TEACHER = "DELETE FROM public.teachers WHERE id = :id";
+    private static final String DELETE_TEACHER = "DELETE FROM teachers WHERE id = :id";
     private static final String READ_TEACHER_BY_NAME_AND_SURNAME = "SELECT name, surname, age, email, " +
             "subject FROM public.teachers WHERE name = :name and surname = :surname";
 
@@ -55,12 +56,19 @@ public class TeacherDaoImpl implements TeacherDao {
     private static final String DELETE_STUDENT_FROM_TEACHER = "delete from students_teachers where student_id = ? and teacher_id = ?";
     private static final String READ_STUDENTS_BY_TEACHER_ID =
             "SELECT* FROM students JOIN students_teachers ON students.id = student_id WHERE teacher_id = ?";
+    private static final String READ_TEACHERS_SORTING_BASE =
+            "SELECT* FROM public.teachers ";
+    private static final String SORT_FIELD = "order by ";
+    private static final String BLANK = " ";
+    private static final String LIMIT = "LIMIT ";
+    private static final String OFFSET = "OFFSET ";
+
     @Override
     public Teacher save(Teacher teacher) {
         Map<String, Object> params = getParams(teacher);
         int teacherId = 0;
         try {
-            teacherId  = simpleJdbcInsert.executeAndReturnKey(params).intValue();
+            teacherId = simpleJdbcInsert.executeAndReturnKey(params).intValue();
         } catch (DataAccessException e) {
             e.getMessage();
         }
@@ -88,6 +96,7 @@ public class TeacherDaoImpl implements TeacherDao {
             e.getMessage();
         }
     }
+
     @Override
     public Optional<Teacher> findById(int teacherId) {
         Map<String, Object> params = new HashMap<>();
@@ -100,6 +109,7 @@ public class TeacherDaoImpl implements TeacherDao {
         }
         return Optional.of(teacher);
     }
+
     @Override
     public List<Teacher> findAllTeachers() {
         List<Teacher> teachers = new ArrayList<>();
@@ -130,7 +140,7 @@ public class TeacherDaoImpl implements TeacherDao {
 
         List<Student> students = new ArrayList<>();
         try {
-            students =  jdbcTemplate.query(READ_STUDENTS_BY_TEACHER_ID, new BeanPropertyRowMapper<>(Student.class), teacherId);
+            students = jdbcTemplate.query(READ_STUDENTS_BY_TEACHER_ID, new BeanPropertyRowMapper<>(Student.class), teacherId);
         } catch (DataAccessException e) {
             e.getMessage();
         }
@@ -156,13 +166,12 @@ public class TeacherDaoImpl implements TeacherDao {
         }
     }
 
-    @Override
-    public List<Teacher> getTeachersByPage(int pageId, int total) {
-        String sql = "Select * from public.teachers limit" + (pageId - 1) + "," + total;
+    public List<Teacher> getSortedTeachersByPage(int pageId, int pageSize, SortingDto sortingDto) {
+
+        StringBuilder sb = createRequestQuery(sortingDto, pageId, pageSize);
         List<Teacher> teacherList = new ArrayList<>();
         try {
-
-            teacherList = jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(Teacher.class));
+            teacherList = jdbcTemplate.query(sb.toString(), new BeanPropertyRowMapper<>(Teacher.class));
 
         } catch (DataAccessException e) {
             e.getMessage();
@@ -178,5 +187,23 @@ public class TeacherDaoImpl implements TeacherDao {
         params.put("email", teacher.getEmail());
         params.put("subject", teacher.getSubject());
         return params;
+    }
+
+    private static StringBuilder createRequestQuery(SortingDto sortingDto, int pageId, int pageSize) {
+        StringBuilder sb = new StringBuilder(READ_TEACHERS_SORTING_BASE);
+        int offset = (pageId - 1) * pageSize;
+        if (sortingDto.getSortingField() != null) {
+            sb.append(SORT_FIELD)
+                    .append(sortingDto.getSortingField())
+                    .append(BLANK)
+                    .append(sortingDto.getSortingOrder())
+                    .append(BLANK)
+                    .append(LIMIT)
+                    .append(pageSize)
+                    .append(BLANK)
+                    .append(OFFSET)
+                    .append(offset);
+        }
+        return sb;
     }
 }

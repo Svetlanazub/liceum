@@ -16,7 +16,7 @@
     </modules>
 
     <name>Task for Ultimate Systems</name>
-    <url>https://github.com/</url>
+    <url>https://github.com/svetlana-zubkova/liceum</url>
 
     <properties>
         <maven.compiler.source>11</maven.compiler.source>

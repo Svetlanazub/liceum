@@ -2,6 +2,7 @@ package pl.zubkova.webuniversity.service.impl;
 
 import org.springframework.stereotype.Service;
 import pl.zubkova.webuniversity.dao.StudentDao;
+import pl.zubkova.webuniversity.dto.SortingDto;
 import pl.zubkova.webuniversity.entity.Student;
 import pl.zubkova.webuniversity.entity.Teacher;
 import pl.zubkova.webuniversity.service.StudentService;
@@ -31,7 +32,7 @@ public class StudentServiceImpl implements StudentService {
 
     @Override
     public void deleteStudent(int studentId) {
-       if (studentDao.findById(studentId).isPresent()) {
+        if (studentDao.findById(studentId).isPresent()) {
             studentDao.delete(studentId);
         } else throw new RuntimeException("No student with this ID");
     }
@@ -64,7 +65,7 @@ public class StudentServiceImpl implements StudentService {
     }
 
     @Override
-    public List<Student> getStudentsByPage(int pageID, int total) {
-        return studentDao.getStudentsByPage(pageID, total);
+    public List<Student> getSortedStudentsByPage(int pageID, int pageSize, SortingDto sortingDto) {
+        return studentDao.getSortedStudentsByPage(pageID, pageSize, sortingDto);
     }
 }

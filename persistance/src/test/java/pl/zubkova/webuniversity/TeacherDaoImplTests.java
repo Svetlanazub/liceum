@@ -22,8 +22,6 @@ import pl.zubkova.webuniversity.entity.Teacher;
 import java.util.List;
 import java.util.Optional;
 
-import static org.junit.jupiter.api.Assertions.*;
-
 /**
  * @author Svetlana_Zubkova
  */

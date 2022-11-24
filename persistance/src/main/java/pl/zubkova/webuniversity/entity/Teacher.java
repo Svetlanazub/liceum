@@ -19,14 +19,13 @@ import java.util.List;
 @NoArgsConstructor
 @Getter
 @Setter
-
 public class Teacher {
     private int id;
     @NotNull(message = "Name should not be empty")
-    @Size(min=2, message = "Name should be more that 2 characters")
+    @Size(min = 2, message = "Name should be more that 2 characters")
     private String name;
     @NotNull(message = "Surname should not be empty")
-    @Size(min=2, message = "Surname should be more that 2 characters")
+    @Size(min = 2, message = "Surname should be more that 2 characters")
     private String surname;
     @NotNull(message = "Age should not be empty")
     @Min(value = 18, message = "Age should be > 18")
@@ -46,8 +45,8 @@ public class Teacher {
         this.subject = subject;
     }
 
-    public void addStudentToTeacher(Student student){
-        if (studentsList == null){
+    public void addStudentToTeacher(Student student) {
+        if (studentsList == null) {
             studentsList = new ArrayList<>();
         }
         studentsList.add(student);

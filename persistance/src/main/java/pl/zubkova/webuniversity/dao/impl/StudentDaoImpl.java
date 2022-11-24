@@ -10,6 +10,7 @@ import org.springframework.jdbc.core.namedparam.NamedParameterJdbcTemplate;
 import org.springframework.jdbc.core.simple.SimpleJdbcInsert;
 import org.springframework.stereotype.Repository;
 import pl.zubkova.webuniversity.dao.StudentDao;
+import pl.zubkova.webuniversity.dto.SortingDto;
 import pl.zubkova.webuniversity.entity.Student;
 import pl.zubkova.webuniversity.entity.Teacher;
 
@@ -46,16 +47,23 @@ public class StudentDaoImpl implements StudentDao {
     private static final String UPDATE_STUDENT = "UPDATE public.students SET name = :name, surname = :surname, age = :age, " +
             "email = :email, specialisation = :specialisation WHERE id = :id";
 
-    private static final String DELETE_STUDENT = "DELETE FROM public.student WHERE id = :id";
+    private static final String DELETE_STUDENT = "DELETE FROM public.students WHERE id = :id";
     private static final String READ_STUDENT_BY_NAME_AND_SURNAME = "SELECT name, surname, age, email, " +
             "specialisation FROM public.students WHERE name = :name and surname = :surname";
 
     private static final String ADD_TEACHER_TO_STUDENT =
-            "insert into students_teachers (student_id, teacher_id) values (?, ?)";
+            "INSERT into students_teachers (student_id, teacher_id) values (?, ?)";
     private static final String DELETE_TEACHER_FROM_STUDENT = "delete from students_teachers where student_id = ? and teacher_id = ?";
 
     private static final String READ_TEACHERS_BY_STUDENT_ID =
-            "SELECT* FROM teachers JOIN students_teachers ON teachers.id = teacher_id WHERE student_id = ?";
+            "SELECT * FROM teachers JOIN students_teachers ON teachers.id = teacher_id WHERE student_id = ?";
+    private static final String READ_STUDENTS_SORTING_BASE =
+            "SELECT * FROM public.students ";
+    private static final String SORT_FIELD = "order by ";
+    private static final String BLANK = " ";
+    private static final String LIMIT = "LIMIT ";
+    private static final String OFFSET = "OFFSET ";
+
 
     @Override
     public Student save(Student student) {
@@ -153,7 +161,8 @@ public class StudentDaoImpl implements StudentDao {
         params.put("id", studentId);
         Student student;
         try {
-            student = namedParameterJdbcTemplate.queryForObject(READ_STUDENT_BY_ID, params, new BeanPropertyRowMapper<>(Student.class));
+            student = namedParameterJdbcTemplate.queryForObject(READ_STUDENT_BY_ID, params,
+                    new BeanPropertyRowMapper<>(Student.class));
         } catch (EmptyResultDataAccessException ignored) {
             return Optional.empty();
         }
@@ -161,12 +170,13 @@ public class StudentDaoImpl implements StudentDao {
     }
 
     @Override
-    public List<Student> getStudentsByPage(int pageid, int total) {
-        String sql = "Select * from public.students limit" + (pageid - 1) + "," + total;
+    public List<Student> getSortedStudentsByPage(int pageId, int pageSize, SortingDto sortingDto) {
+
+        StringBuilder sb = createRequestQuery(sortingDto, pageId, pageSize);
+
         List<Student> studentList = new ArrayList<>();
         try {
-
-            studentList = jdbcTemplate.query(sql, new BeanPropertyRowMapper<>(Student.class));
+            studentList = jdbcTemplate.query(sb.toString(), new BeanPropertyRowMapper<>(Student.class));
 
         } catch (DataAccessException e) {
             e.getMessage();
@@ -182,5 +192,23 @@ public class StudentDaoImpl implements StudentDao {
         params.put("email", student.getEmail());
         params.put("specialisation", student.getSpecialisation());
         return params;
+    }
+
+    private static StringBuilder createRequestQuery(SortingDto sortingDto, int pageId, int pageSize) {
+        StringBuilder sb = new StringBuilder(READ_STUDENTS_SORTING_BASE);
+        int offset = (pageId - 1) * pageSize;
+        if (sortingDto.getSortingField() != null) {
+            sb.append(SORT_FIELD)
+                    .append(sortingDto.getSortingField())
+                    .append(BLANK)
+                    .append(sortingDto.getSortingOrder())
+                    .append(BLANK)
+                    .append(LIMIT)
+                    .append(pageSize)
+                    .append(BLANK)
+                    .append(OFFSET)
+                    .append(offset);
+        }
+        return sb;
     }
 }

@@ -1,5 +1,6 @@
 package pl.zubkova.webuniversity.dao;
 
+import pl.zubkova.webuniversity.dto.SortingDto;
 import pl.zubkova.webuniversity.entity.Student;
 import pl.zubkova.webuniversity.entity.Teacher;
 
@@ -17,7 +18,9 @@ public interface TeacherDao {
     void delete(int id);
 
     List<Teacher> findAllTeachers();
+
     public Optional<Teacher> findById(int teacherId);
+
     Optional<Teacher> findByNameAndSurname(String name, String surname);
 
     List<Student> findAllStudentsForTheTeacher(int teacherId);
@@ -25,5 +28,6 @@ public interface TeacherDao {
     void addStudentToTeacher(int studentId, int teacherId);
 
     void deleteStudentFromTeacher(int studentId, int teacherId);
-    List<Teacher>getTeachersByPage(int pageId,int total);
+
+    List<Teacher> getSortedTeachersByPage(int pageId, int limit, SortingDto sortingDto);
 }

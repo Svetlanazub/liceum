@@ -6,6 +6,7 @@ import pl.zubkova.webuniversity.config.ApplicationConfig;
 
 import javax.servlet.ServletContext;
 import javax.servlet.ServletException;
+
 /**
  * @author Svetlana_Zubkova
  */
@@ -14,12 +15,12 @@ public class ApplicationInitializer extends AbstractAnnotationConfigDispatcherSe
 
     public void onStartup(ServletContext context) throws ServletException {
         super.onStartup(context);
-       context.setInitParameter("spring.profiles.active", "Test");
+        context.setInitParameter("spring.profiles.active", "Test");
     }
 
     @Override
     protected Class<?>[] getRootConfigClasses() {
-        return new Class[]{ ApplicationConfig.class};
+        return new Class[]{ApplicationConfig.class};
     }
 
     @Override

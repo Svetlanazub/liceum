@@ -13,7 +13,6 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
-import org.springframework.transaction.annotation.Transactional;
 import pl.zubkova.webuniversity.config.ApplicationConfig;
 import pl.zubkova.webuniversity.dao.impl.StudentDaoImpl;
 import pl.zubkova.webuniversity.dao.impl.TeacherDaoImpl;
@@ -44,6 +43,7 @@ public class StudentDaoImplTests {
     private SimpleJdbcInsert simpleJdbcInsert;
     @Autowired
     private JdbcTemplate jdbcTemplate;
+
     @Test
     public void row_set_should_not_be_empty_after_adding_teacher() {
         //given
@@ -62,7 +62,7 @@ public class StudentDaoImplTests {
         studentDao.addTeacherToStudent(teacherId, 3);
 
         //then
-        Assertions.assertEquals("Jadwiga",studentDao.findAllTeachersForTheStudent(3).get(listTeachersSizeBeforeAdding).getName());
+        Assertions.assertEquals("Jadwiga", studentDao.findAllTeachersForTheStudent(3).get(listTeachersSizeBeforeAdding).getName());
     }
 
     @Test
@@ -87,6 +87,7 @@ public class StudentDaoImplTests {
         //then
         Assertions.assertTrue(studentDao.findAllTeachersForTheStudent(studentId).isEmpty());
     }
+
     @Test
     public void should_id_not_be_null_when_save() {
         //given
@@ -169,7 +170,6 @@ public class StudentDaoImplTests {
         Assertions.assertTrue(allTeachersForTheStudent.size() > 0);
 
     }
-
 
 
     private static Student getStudent(String name, String surname, int age, String email, String specialization) {

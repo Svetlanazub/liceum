@@ -1,5 +1,6 @@
 package pl.zubkova.webuniversity.service;
 
+import pl.zubkova.webuniversity.dto.SortingDto;
 import pl.zubkova.webuniversity.entity.Student;
 import pl.zubkova.webuniversity.entity.Teacher;
 
@@ -24,5 +25,6 @@ public interface StudentService {
     void addTeacherToTheStudent (int teacherId, int studentId);
 
     void deleteTeacherFromTheStudent (int teacherId, int studentId);
-    List<Student> getStudentsByPage(int pageid, int total);
+
+    List<Student> getSortedStudentsByPage(int pageID, int pageSize, SortingDto sortingDto);
 }

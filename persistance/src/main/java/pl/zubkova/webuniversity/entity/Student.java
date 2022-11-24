@@ -20,15 +20,14 @@ import javax.validation.constraints.Size;
 @NoArgsConstructor
 @Getter
 @Setter
-
 public class Student {
 
     private int id;
     @NotNull(message = "Name should not be empty")
-    @Size(min=2, message = "Name should be more that 2 characters")
+    @Size(min = 2, message = "Name should be more that 2 characters")
     private String name;
     @NotNull(message = "Surname should not be empty")
-    @Size(min=2, message = "Surname should be more that 2 letters")
+    @Size(min = 2, message = "Surname should be more that 2 letters")
     private String surname;
     @NotNull(message = "Age should not be empty")
     @Min(value = 18, message = "Age should be > 18")
@@ -37,8 +36,6 @@ public class Student {
     @Email
     private String email;
     private String specialisation;
-    @Getter
-    @Setter
     private List<Teacher> teachersList = new ArrayList<>();
 
     public Student(String name, String surname, int age, String email, String specialisation) {
@@ -49,8 +46,8 @@ public class Student {
         this.specialisation = specialisation;
     }
 
-    private void addTeacherToStudent(Teacher teacher){
-        if(teachersList == null){
+    private void addTeacherToStudent(Teacher teacher) {
+        if (teachersList == null) {
             teachersList = new ArrayList<>();
         }
         teachersList.add(teacher);
